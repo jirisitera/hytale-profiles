@@ -1,0 +1,9 @@
+.gradle/
+.idea/
+.vscode/
+build/
+run/
+*.jar
+*.zip
+*.exe
+.hytale-downloader-credentials.json
