@@ -1,0 +1,20 @@
+{
+  "Group": "com.japicraft",
+  "Name": "Profiles",
+  "Version": "1.0",
+  "Description": "In-game profiles for players in Hytale.",
+  "Authors": [
+    {
+      "Name": "japicraft",
+      "Email": "contact@japicraft.com",
+      "Url": "https://japicraft.com"
+    }
+  ],
+  "Website": "https://github.com/jirisitera/hytale-profiles",
+  "ServerVersion": "*",
+  "Dependencies": {},
+  "OptionalDependencies": {},
+  "DisabledByDefault": false,
+  "IncludesAssetPack": true,
+  "Main": "com.japicraft.Profiles"
+}
