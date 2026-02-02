@@ -1,7 +1,7 @@
 {
   "Group": "com.japicraft",
   "Name": "Profiles",
-  "Version": "1.0",
+  "Version": "1.0.0",
   "Description": "In-game profiles for players in Hytale.",
   "Authors": [
     {
