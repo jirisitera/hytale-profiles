@@ -1,0 +1,27 @@
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: The semantic version to be released.
+        required: true
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - uses: actions/setup-java@main
+        with:
+          java-version: 25
+          distribution: temurin
+      - uses: gradle/actions/setup-gradle@main
+      - run: gradle shadowJar
+      - uses: softprops/action-gh-release@master
+        with:
+          tag_name: v${{ inputs.version }}
+          files: build/libs/profiles.jar
+      - uses: itsmeow/curseforge-upload@v3
+        with:
+          game_endpoint: hytale
+          file_path: build/libs/profiles.jar
+          token: ${{ secrets.CURSEFORGE_TOKEN }}
+          project_id: 1437771
