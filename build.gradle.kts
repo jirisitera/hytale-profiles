@@ -7,9 +7,7 @@ group = "com.japicraft"
 version = "1.0.0"
 repositories {
     mavenCentral()
-    maven {
-        url = uri("https://maven.hytale.com/release")
-    }
+    maven { url = uri("https://maven.hytale.com/release") }
 }
 dependencies {
     compileOnly("com.hypixel.hytale:Server:2026.01.28-87d03be09")
