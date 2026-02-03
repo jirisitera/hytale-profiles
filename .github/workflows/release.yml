@@ -27,3 +27,6 @@ jobs:
           file_path: build/libs/profiles.jar
           token: ${{ secrets.CURSEFORGE_TOKEN }}
           project_id: 1437771
+          release_type: release
+          game_versions: "Early Access"
+          display_name: "Profiles v${{ inputs.version }}"
