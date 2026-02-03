@@ -4,6 +4,8 @@ on:
       version:
         description: The semantic version to be released.
         required: true
+permissions:
+  contents: write
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -19,7 +21,7 @@ jobs:
         with:
           tag_name: v${{ inputs.version }}
           files: build/libs/profiles.jar
-      - uses: itsmeow/curseforge-upload@v3
+      - uses: itsmeow/curseforge-upload@master
         with:
           game_endpoint: hytale
           file_path: build/libs/profiles.jar
