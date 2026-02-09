@@ -9,6 +9,7 @@ import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
 import com.hypixel.hytale.protocol.packets.interface_.Page;
 import com.hypixel.hytale.server.core.Message;
+import com.hypixel.hytale.server.core.NameMatching;
 import com.hypixel.hytale.server.core.asset.type.item.config.Item;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.entity.entities.player.pages.InteractiveCustomUIPage;
@@ -22,26 +23,28 @@ import com.hypixel.hytale.server.core.ui.builder.EventData;
 import com.hypixel.hytale.server.core.ui.builder.UICommandBuilder;
 import com.hypixel.hytale.server.core.ui.builder.UIEventBuilder;
 import com.hypixel.hytale.server.core.universe.PlayerRef;
+import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 
 import javax.annotation.Nonnull;
-import java.util.Objects;
 
-public class ProfilePage extends InteractiveCustomUIPage<ProfilePage.InfoData> {
+public class ProfilePage extends InteractiveCustomUIPage<ProfilePage.ProfileData> {
+    private static final String PROFILE_UI = "Pages/Profile.ui";
     private static final String BUTTON = "Button";
     private static final String LIKE_BUTTON = "Like" + BUTTON;
-    private static final String CLOSE_BUTTON = "Close" + BUTTON;
-    private static final String PROFILE_UI = "Pages/Profile.ui";
+    private static final String EXIT_BUTTON = "Exit" + BUTTON;
+    private static final String SEARCH_BAR = "SearchBar";
+    private static final String SEARCH_STATUS = "SearchStatus";
     private static final String EMPTY_SLOT = "EditorTool_Hitbox";
     private static final String NO_ITEM = "No Item Equipped";
     private static final I18nModule i18n = I18nModule.get();
     private static final long NANOS_PER_SECOND = 1000000000L;
-    private final Ref<EntityStore> senderRef;
-    public ProfilePage(PlayerRef playerRef, Ref<EntityStore> senderRef) {
-        this.senderRef = senderRef;
-        super(playerRef, CustomPageLifetime.CanDismissOrCloseThroughInteraction, InfoData.CODEC);
+
+    public ProfilePage(PlayerRef playerRef) {
+        super(playerRef, CustomPageLifetime.CanDismissOrCloseThroughInteraction, ProfileData.CODEC);
     }
+
     @Override
     public void build(@Nonnull Ref<EntityStore> ref, @Nonnull UICommandBuilder builder, @Nonnull UIEventBuilder events, @Nonnull Store<EntityStore> store) {
         builder.append(PROFILE_UI);
@@ -75,8 +78,10 @@ public class ProfilePage extends InteractiveCustomUIPage<ProfilePage.InfoData> {
         builder.set("#Spawn.Text", "Time alive: " + player.getSinceLastSpawnNanos() / NANOS_PER_SECOND + " seconds");
         // register buttons
         events.addEventBinding(CustomUIEventBindingType.Activating, "#" + LIKE_BUTTON, EventData.of(BUTTON, LIKE_BUTTON));
-        events.addEventBinding(CustomUIEventBindingType.Activating, "#" + CLOSE_BUTTON, EventData.of(BUTTON, CLOSE_BUTTON));
+        events.addEventBinding(CustomUIEventBindingType.Activating, "#" + EXIT_BUTTON, EventData.of(BUTTON, EXIT_BUTTON));
+        events.addEventBinding(CustomUIEventBindingType.ValueChanged, "#" + SEARCH_BAR, EventData.of("@" + SEARCH_BAR, "#" + SEARCH_BAR + ".Value"));
     }
+
     private void appendStat(UICommandBuilder builder, EntityStatMap statMap, String name, int type) {
         EntityStatValue stat = statMap.get(type);
         if (stat == null) {
@@ -84,35 +89,68 @@ public class ProfilePage extends InteractiveCustomUIPage<ProfilePage.InfoData> {
         }
         builder.set("#" + name + ".Text", name + ": " + stat.get() + "/" + stat.getMax());
     }
+
     private void appendItem(UICommandBuilder builder, String language, String slotName, ItemStack item) {
         boolean isSlotEmpty = item == null;
         builder.set("#" + slotName + "." + "ItemId", isSlotEmpty ? EMPTY_SLOT : item.getItemId());
         builder.set("#" + slotName + "." + "TooltipText", isSlotEmpty ? NO_ITEM : this.getItemTooltip(language, item));
     }
-    private String getItemTooltip(String language, ItemStack item) {
-        String key = Objects.requireNonNull(Item.getAssetMap().getAsset(item.getItemId())).getTranslationKey();
-        return i18n.getMessage(language, key) + " (" + Math.round(item.getDurability()) + "/" + Math.round(item.getMaxDurability()) + ")";
+
+    private String getItemTooltip(String language, ItemStack itemStack) {
+        Item item = Item.getAssetMap().getAsset(itemStack.getItemId());
+        if (item == null) {
+            return NO_ITEM;
+        }
+        return i18n.getMessage(language, item.getTranslationKey()) + " (" + Math.round(itemStack.getDurability()) + "/" + Math.round(item.getMaxDurability()) + ")";
     }
+
     @Override
-    public void handleDataEvent(@Nonnull Ref<EntityStore> ref, @Nonnull Store<EntityStore> store, @Nonnull InfoData data) {
+    public void handleDataEvent(@Nonnull Ref<EntityStore> ref, @Nonnull Store<EntityStore> store, @Nonnull ProfileData data) {
+        super.handleDataEvent(ref, store, data);
         Player player = store.getComponent(ref, Player.getComponentType());
         if (player == null) {
             return;
         }
-        player.getPageManager().setPage(ref, store, Page.None);
-        if (!LIKE_BUTTON.equals(data.button)) {
+        String searchedName = data.search;
+        if (searchedName != null) {
+            if (searchedName.length() < 3) {
+                updateSearchStatus("Name is too short.");
+                return;
+            }
+            PlayerRef searchedPlayerRef = Universe.get().getPlayerByUsername(searchedName, NameMatching.EXACT_IGNORE_CASE);
+            if (searchedPlayerRef == null) {
+                updateSearchStatus("Player " + searchedName + " not found.");
+            } else {
+                updateSearchStatus("Found player " + searchedPlayerRef.getUsername() + "!");
+            }
             return;
         }
-        Player senderPlayer = senderRef.getStore().getComponent(senderRef, Player.getComponentType());
-        if (senderPlayer == null) {
+        sendUpdate();
+        String buttonName = data.button;
+        if (buttonName == null) {
             return;
         }
-        player.sendMessage(Message.raw("You gave a like to " + senderPlayer.getDisplayName() + "'s profile!"));
-        senderPlayer.sendMessage(Message.raw("You received a like on your profile from " + player.getDisplayName() + "!"));
+        switch (buttonName) {
+            case LIKE_BUTTON -> {
+                player.sendMessage(Message.raw("You gave a like to " + player.getDisplayName() + "'s profile!"));
+                player.sendMessage(Message.raw("You received a like on your profile from " + player.getDisplayName() + "!"));
+            }
+            case EXIT_BUTTON -> player.getPageManager().setPage(ref, store, Page.None);
+        }
     }
-    public static class InfoData {
-        String button;
-        public static final BuilderCodec<InfoData> CODEC = BuilderCodec.builder(InfoData.class, InfoData::new)
-                .append(new KeyedCodec<>(BUTTON, Codec.STRING), (d, v) -> d.button = v, d -> d.button).add().build();
+
+    public void updateSearchStatus(String status) {
+        UICommandBuilder uiCommandBuilder = new UICommandBuilder();
+        uiCommandBuilder.set("#" + SEARCH_STATUS + ".Text", status);
+        sendUpdate(uiCommandBuilder, false);
+    }
+
+    public static class ProfileData {
+        public static final BuilderCodec<ProfileData> CODEC = BuilderCodec.builder(ProfileData.class, ProfileData::new)
+                .append(new KeyedCodec<>(BUTTON, Codec.STRING), (d, v) -> d.button = v, d -> d.button).add()
+                .append(new KeyedCodec<>("@" + SEARCH_BAR, Codec.STRING), (d, v) -> d.search = v, d -> d.search).add()
+                .build();
+        private String button;
+        private String search;
     }
 }

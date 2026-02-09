@@ -1,115 +1,157 @@
 $Common = "../Common.ui";
 $Sounds = "../Sounds.ui";
 $Common.@PageOverlay {
-  LayoutMode: Middle;
-  $Common.@DecoratedContainer {
-    Anchor: (Width: 640);
+  LayoutMode: Center;
+  $Common.@Container {
+    Anchor: (Width: 200);
+    Padding: (Right: 0);
     #Title {
-      $Common.@Title #TitleText {}
+      $Common.@Title {
+        Text: "SIDEBAR";
+      }
     }
     #Content {
-      LayoutMode: Top;
-      Padding: (Full: 16);
-      Group {
-        Anchor: (Vertical: 16, Height: 1);
-        Background: #5e512c(0.4);
+    }
+  }
+  Group {
+    LayoutMode: Middle;
+    $Common.@Container {
+      Anchor: (Width: 750, Height: 150);
+      Padding: (Bottom: 16);
+      #Title {
+        $Common.@Title {
+          Text: "SEARCH FOR A PLAYER";
+        }
       }
-      Label {
-        Anchor: (Bottom: 16, Horizontal: 8);
-        Style: (...$Common.@DefaultLabelStyle, FontSize: 25, TextColor: #ffffff, HorizontalAlignment: Center);
-        Text: "Stats";
-      }
-      Label #Health {
-        Anchor: (Bottom: 16, Horizontal: 8);
-        Style: (...$Common.@DefaultLabelStyle, FontSize: 15, TextColor: #c0c7d1, HorizontalAlignment: Center);
-        Text: "Health: 0/0";
-      }
-      Label #Stamina {
-        Anchor: (Bottom: 16, Horizontal: 8);
-        Style: (...$Common.@DefaultLabelStyle, FontSize: 15, TextColor: #c0c7d1, HorizontalAlignment: Center);
-        Text: "Stamina: 0/0";
-      }
-      Label #Oxygen {
-        Anchor: (Bottom: 16, Horizontal: 8);
-        Style: (...$Common.@DefaultLabelStyle, FontSize: 15, TextColor: #c0c7d1, HorizontalAlignment: Center);
-        Text: "Oxygen: 0/0";
-      }
-      Label #Mana {
-        Anchor: (Bottom: 16, Horizontal: 8);
-        Style: (...$Common.@DefaultLabelStyle, FontSize: 15, TextColor: #c0c7d1, HorizontalAlignment: Center);
-        Text: "Mana: 0/0";
-      }
-      Label #Energy {
-        Anchor: (Bottom: 16, Horizontal: 8);
-        Style: (...$Common.@DefaultLabelStyle, FontSize: 15, TextColor: #c0c7d1, HorizontalAlignment: Center);
-        Text: "Energy: 0/0";
-      }
-      Label #Ammo {
-        Anchor: (Bottom: 16, Horizontal: 8);
-        Style: (...$Common.@DefaultLabelStyle, FontSize: 15, TextColor: #c0c7d1, HorizontalAlignment: Center);
-        Text: "Ammo: 0/0";
-      }
-      Group {
-        Anchor: (Vertical: 16, Height: 1);
-        Background: #5e512c(0.4);
-      }
-      Label {
-        Anchor: (Bottom: 16, Horizontal: 8);
-        Style: (...$Common.@DefaultLabelStyle, FontSize: 25, TextColor: #ffffff, HorizontalAlignment: Center);
-        Text: "Armor";
-      }
-      Group {
+      #Content {
         LayoutMode: Center;
-        ItemSlot #Helmet {
-          Anchor: (Width: 64, Height: 64, Top: 0, Left: 0);
+        Padding: (Full: 4);
+        $Common.@TextField #SearchBar {
+          Anchor: (Width: 400, Height: 50, Left: 10);
+          Padding: (Left: 20);
+          PlaceholderText: "Enter player username...";
+          MaxLength: 16;
+          AutoFocus: true;
         }
-        ItemSlot #Chestplate {
-          Anchor: (Width: 64, Height: 64, Top: 0, Left: 0);
-        }
-        ItemSlot #Gauntlets {
-          Anchor: (Width: 64, Height: 64, Top: 0, Left: 0);
-        }
-        ItemSlot #Boots {
-          Anchor: (Width: 64, Height: 64, Top: 0, Left: 0);
+        Label #SearchStatus {
+          Anchor: (Width: 400, Height: 50, Left: 20);
+          Text: "Showing your profile.";
         }
       }
-      Group {
-        Anchor: (Vertical: 16, Height: 1);
-        Background: #5e512c(0.4);
+    }
+    $Common.@DecoratedContainer {
+      Anchor: (Width: 750);
+      #Title {
+        $Common.@Title #TitleText {}
       }
-      Label {
-        Anchor: (Bottom: 16, Horizontal: 8);
-        Style: (...$Common.@DefaultLabelStyle, FontSize: 25, TextColor: #ffffff, HorizontalAlignment: Center);
-        Text: "Other";
-      }
-      Label #World {
-        Anchor: (Bottom: 16, Horizontal: 8);
-        Style: (...$Common.@DefaultLabelStyle, FontSize: 15, TextColor: #c0c7d1, HorizontalAlignment: Center);
-        Text: "World: None";
-      }
-      Label #Spawn {
-        Anchor: (Bottom: 16, Horizontal: 8);
-        Style: (...$Common.@DefaultLabelStyle, FontSize: 15, TextColor: #c0c7d1, HorizontalAlignment: Center);
-        Text: "";
-      }
-      Group {
-        Anchor: (Vertical: 16, Height: 1);
-        Background: #5e512c(0.4);
-      }
-      Group #Buttons {
-        LayoutMode: Center;
-        Anchor: (Top: 8);
-        $Common.@TextButton #LikeButton {
-          @Sounds = $Sounds.@SaveSettings;
-          @Anchor = (Right: 4);
-          Text: "Give Like";
-          FlexWeight: 1;
+      #Content {
+        LayoutMode: Middle;
+        Padding: (Full: 16);
+        Group {
+          Anchor: (Vertical: 16, Height: 1);
+          Background: #5e512c(0.4);
         }
-        $Common.@SecondaryTextButton #CloseButton {
-          @Sounds = $Sounds.@ButtonsCancel;
-          @Anchor = (Left: 4);
-          Text: "Close";
-          FlexWeight: 1;
+        Label {
+          Anchor: (Bottom: 16, Horizontal: 8);
+          Style: (FontSize: 25, TextColor: #ffffff, HorizontalAlignment: Center);
+          Text: "STATS";
+        }
+        Group {
+          LayoutMode: Center;
+          Label #Health {
+            Anchor: (Bottom: 16, Horizontal: 8);
+            Style: (FontSize: 15, TextColor: #c0c7d1, HorizontalAlignment: Center);
+            Text: "Health: 0/0";
+          }
+          Label #Stamina {
+            Anchor: (Bottom: 16, Horizontal: 8);
+            Style: (FontSize: 15, TextColor: #c0c7d1, HorizontalAlignment: Center);
+            Text: "Stamina: 0/0";
+          }
+          Label #Oxygen {
+            Anchor: (Bottom: 16, Horizontal: 8);
+            Style: (FontSize: 15, TextColor: #c0c7d1, HorizontalAlignment: Center);
+            Text: "Oxygen: 0/0";
+          }
+        }
+        Group {
+          LayoutMode: Center;
+          Label #Mana {
+            Anchor: (Bottom: 16, Horizontal: 8);
+            Style: (FontSize: 15, TextColor: #c0c7d1, HorizontalAlignment: Center);
+            Text: "Mana: 0/0";
+          }
+          Label #Energy {
+            Anchor: (Bottom: 16, Horizontal: 8);
+            Style: (FontSize: 15, TextColor: #c0c7d1, HorizontalAlignment: Center);
+            Text: "Energy: 0/0";
+          }
+          Label #Ammo {
+            Anchor: (Bottom: 16, Horizontal: 8);
+            Style: (FontSize: 15, TextColor: #c0c7d1, HorizontalAlignment: Center);
+            Text: "Ammo: 0/0";
+          }
+        }
+        Group {
+          Anchor: (Vertical: 16, Height: 1);
+          Background: #5e512c(0.4);
+        }
+        Label {
+          Anchor: (Bottom: 16, Horizontal: 8);
+          Style: (FontSize: 25, TextColor: #ffffff, HorizontalAlignment: Center);
+          Text: "ARMOR";
+        }
+        Group {
+          LayoutMode: Center;
+          ItemSlot #Helmet {
+            Anchor: (Width: 64, Height: 64, Top: 0, Left: 0);
+          }
+          ItemSlot #Chestplate {
+            Anchor: (Width: 64, Height: 64, Top: 0, Left: 0);
+          }
+          ItemSlot #Gauntlets {
+            Anchor: (Width: 64, Height: 64, Top: 0, Left: 0);
+          }
+          ItemSlot #Boots {
+            Anchor: (Width: 64, Height: 64, Top: 0, Left: 0);
+          }
+        }
+        Group {
+          Anchor: (Vertical: 16, Height: 1);
+          Background: #5e512c(0.4);
+        }
+        Label {
+          Anchor: (Bottom: 16, Horizontal: 8);
+          Style: (FontSize: 25, TextColor: #ffffff, HorizontalAlignment: Center);
+          Text: "OTHER";
+        }
+        Label #World {
+          Anchor: (Bottom: 16, Horizontal: 8);
+          Style: (FontSize: 15, TextColor: #c0c7d1, HorizontalAlignment: Center);
+          Text: "World: None";
+        }
+        Label #Spawn {
+          Anchor: (Bottom: 16, Horizontal: 8);
+          Style: (FontSize: 15, TextColor: #c0c7d1, HorizontalAlignment: Center);
+          Text: "";
+        }
+        Group {
+          Anchor: (Vertical: 16, Height: 1);
+          Background: #5e512c(0.4);
+        }
+        Group {
+          LayoutMode: Center;
+          Anchor: (Top: 8);
+          $Common.@TextButton #LikeButton {
+            @Sounds = $Sounds.@SaveSettings;
+            Anchor: (Right: 4, Width: 250, Height: 50);
+            Text: "GIVE LIKE!";
+          }
+          $Common.@SecondaryTextButton #ExitButton {
+            @Sounds = $Sounds.@ButtonsCancel;
+            Anchor: (Left: 4, Width: 250, Height: 50);
+            Text: "CLOSE";
+          }
         }
       }
     }
