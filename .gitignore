@@ -2,8 +2,9 @@
 .idea/
 .vscode/
 build/
-run/
+server/
 *.jar
 *.zip
 *.exe
-.hytale-downloader-credentials.json
+*.bat
+gradlew
