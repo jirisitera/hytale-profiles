@@ -40,11 +40,9 @@ public class ProfilePage extends InteractiveCustomUIPage<ProfilePage.ProfileData
     private static final String NO_ITEM = "No Item Equipped";
     private static final I18nModule i18n = I18nModule.get();
     private static final long NANOS_PER_SECOND = 1000000000L;
-
     public ProfilePage(PlayerRef playerRef) {
         super(playerRef, CustomPageLifetime.CanDismissOrCloseThroughInteraction, ProfileData.CODEC);
     }
-
     @Override
     public void build(@Nonnull Ref<EntityStore> ref, @Nonnull UICommandBuilder builder, @Nonnull UIEventBuilder events, @Nonnull Store<EntityStore> store) {
         builder.append(PROFILE_UI);
@@ -81,7 +79,6 @@ public class ProfilePage extends InteractiveCustomUIPage<ProfilePage.ProfileData
         events.addEventBinding(CustomUIEventBindingType.Activating, "#" + EXIT_BUTTON, EventData.of(BUTTON, EXIT_BUTTON));
         events.addEventBinding(CustomUIEventBindingType.ValueChanged, "#" + SEARCH_BAR, EventData.of("@" + SEARCH_BAR, "#" + SEARCH_BAR + ".Value"));
     }
-
     private void appendStat(UICommandBuilder builder, EntityStatMap statMap, String name, int type) {
         EntityStatValue stat = statMap.get(type);
         if (stat == null) {
@@ -89,13 +86,11 @@ public class ProfilePage extends InteractiveCustomUIPage<ProfilePage.ProfileData
         }
         builder.set("#" + name + ".Text", name + ": " + stat.get() + "/" + stat.getMax());
     }
-
     private void appendItem(UICommandBuilder builder, String language, String slotName, ItemStack item) {
         boolean isSlotEmpty = item == null;
         builder.set("#" + slotName + "." + "ItemId", isSlotEmpty ? EMPTY_SLOT : item.getItemId());
         builder.set("#" + slotName + "." + "TooltipText", isSlotEmpty ? NO_ITEM : this.getItemTooltip(language, item));
     }
-
     private String getItemTooltip(String language, ItemStack itemStack) {
         Item item = Item.getAssetMap().getAsset(itemStack.getItemId());
         if (item == null) {
@@ -103,7 +98,6 @@ public class ProfilePage extends InteractiveCustomUIPage<ProfilePage.ProfileData
         }
         return i18n.getMessage(language, item.getTranslationKey()) + " (" + Math.round(itemStack.getDurability()) + "/" + Math.round(item.getMaxDurability()) + ")";
     }
-
     @Override
     public void handleDataEvent(@Nonnull Ref<EntityStore> ref, @Nonnull Store<EntityStore> store, @Nonnull ProfileData data) {
         super.handleDataEvent(ref, store, data);
@@ -138,13 +132,11 @@ public class ProfilePage extends InteractiveCustomUIPage<ProfilePage.ProfileData
             case EXIT_BUTTON -> player.getPageManager().setPage(ref, store, Page.None);
         }
     }
-
     public void updateSearchStatus(String status) {
         UICommandBuilder uiCommandBuilder = new UICommandBuilder();
         uiCommandBuilder.set("#" + SEARCH_STATUS + ".Text", status);
         sendUpdate(uiCommandBuilder, false);
     }
-
     public static class ProfileData {
         public static final BuilderCodec<ProfileData> CODEC = BuilderCodec.builder(ProfileData.class, ProfileData::new)
                 .append(new KeyedCodec<>(BUTTON, Codec.STRING), (d, v) -> d.button = v, d -> d.button).add()

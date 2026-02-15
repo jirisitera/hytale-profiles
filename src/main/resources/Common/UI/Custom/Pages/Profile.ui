@@ -3,7 +3,7 @@ $Sounds = "../Sounds.ui";
 $Common.@PageOverlay {
   LayoutMode: Center;
   $Common.@Container {
-    Anchor: (Width: 200);
+    Anchor: (Width: 200, Height: 750);
     Padding: (Right: 0);
     #Title {
       $Common.@Title {
@@ -28,19 +28,18 @@ $Common.@PageOverlay {
         Padding: (Full: 4);
         $Common.@TextField #SearchBar {
           Anchor: (Width: 400, Height: 50, Left: 10);
-          Padding: (Left: 20);
           PlaceholderText: "Enter player username...";
           MaxLength: 16;
           AutoFocus: true;
         }
         Label #SearchStatus {
-          Anchor: (Width: 400, Height: 50, Left: 20);
+          Anchor: (Width: 200, Height: 50, Left: 20);
           Text: "Showing your profile.";
         }
       }
     }
     $Common.@DecoratedContainer {
-      Anchor: (Width: 750);
+      Anchor: (Width: 750, Height: 750);
       #Title {
         $Common.@Title #TitleText {}
       }
