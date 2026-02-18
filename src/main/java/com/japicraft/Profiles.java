@@ -9,8 +9,9 @@ public class Profiles extends JavaPlugin {
     public Profiles(@NonNullDecl JavaPluginInit init) {
         super(init);
     }
+
     @Override
-    public void setup() {
+    protected void setup() {
         this.getCommandRegistry().registerCommand(new ProfileCommand());
     }
 }
